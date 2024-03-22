@@ -1,0 +1,61 @@
+/*postcss-pxtransform disable*/
+@import "../../app.less";
+
+.bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  width: 100%;
+  overflow: hidden;
+  background-color: @item-bg;
+  .inner {
+    &.ios {
+      height: 44px;
+      padding-right: 190rpx;
+      width: calc(100%-190rpx);
+      .left {
+        width: 190rpx;
+      }
+    }
+    &.android {
+      height: 48px;
+      padding-right: 222rpx;
+      width: calc(100%-222rpx);
+      .left {
+        width: 222rpx;
+      }
+    }
+    display: flex;
+    align-items: center;
+    box-sizing: content-box;
+    .left {
+      padding-left: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .right {
+      margin-right: 16px;
+    }
+    .center {
+      font-size: 16px;
+      text-align: center;
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  .buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .placeholder {
+    position: relative;
+    z-index: 50;
+    visibility: hidden;
+  }
+}

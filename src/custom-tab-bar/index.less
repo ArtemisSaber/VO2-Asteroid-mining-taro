@@ -1,0 +1,23 @@
+/*postcss-pxtransform disable*/
+@import "../app.less";
+
+.tabbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: @bg-color;
+  color: #fff;
+  font-family: Jost, "Times New Roman", Times, serif;
+  .tab-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+    height: 80px;
+    &.active {
+      border-top: 4px solid #fff;
+      box-sizing: border-box;
+    }
+  }
+}
