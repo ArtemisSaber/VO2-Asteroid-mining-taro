@@ -13,8 +13,8 @@ const GradientCover = ({ angle = 0, children }: GradientCoverProps) => {
     <View
       className="gradient-cover"
       style={{
-        background: `linear-gradient(${angle}deg, rgba(13,2,22,1) 0%, rgba(13,2,22,0) 100%)`,
-        height: `24px`,
+        background: `linear-gradient(${angle}deg, rgba(13,2,22,1) 0%,rgba(13,2,22,1) 30%, rgba(13,2,22,0) 100%)`,
+        height: `48px`,
       }}
     >
       {children}

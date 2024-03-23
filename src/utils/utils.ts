@@ -44,3 +44,10 @@ export const getItemById = <T extends { _id: string }>(
 ): T | undefined => {
   return arr.find((item) => item._id === id);
 };
+
+export enum TransitStatus {
+  "Idle" = 0,
+  "Travelling" = 1,
+  "Mining" = 2,
+  "Transferring" = 3,
+}

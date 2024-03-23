@@ -1,7 +1,7 @@
 export interface Miner {
   _id: string;
   name: string;
-  planet: string;
+  planet: Planet;
   x: number;
   y: number;
   angle: number;
@@ -11,7 +11,7 @@ export interface Miner {
   status: number;
   minerals: number;
   __v: number;
-  target: string;
+  target: Planet | Asteroid;
   targetType: string;
 }
 export interface Planet {
@@ -26,4 +26,24 @@ export interface Planet {
 export interface Position {
   x: number;
   y: number;
+}
+
+export interface EventData {
+  event: string;
+  args: Array<TickPayload>;
+}
+export interface Asteroid {
+  currentMiner: string | null;
+  minerals: number;
+  name: string;
+  position: Position;
+  status: number;
+  _v: number;
+  _id: string;
+}
+export interface TickPayload {
+  asteroids: Array<Asteroid>;
+  miners: Array<Miner>;
+  planets: Array<Planet>;
+  currentTick: number;
 }

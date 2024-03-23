@@ -1,5 +1,11 @@
 import { View, Image, ScrollView } from "@tarojs/components";
-import { getStorageSync, setStorage, useLoad, useReady } from "@tarojs/taro";
+import {
+  getStorageSync,
+  setStorageSync,
+  useLoad,
+  useReady,
+  useUnload,
+} from "@tarojs/taro";
 import NavBar from "@/components/custom-nav";
 import IntersectionIcon from "@/assets/images/Intersect.svg";
 import {
@@ -9,20 +15,18 @@ import {
   getTabBarHeight,
 } from "@/utils/utils";
 import GradientCover from "@/components/gradient-cover";
-import { getMinersList } from "@/api/miner";
-import { useEffect, useState } from "react";
-import { planetStore, tabBarStore } from "@/store/stores";
-import { planets, tabIndex } from "@/store/atoms";
-import { getPlanetsList } from "@/api/planets";
-import { Miner, Planet } from "@/types/types";
-import { Provider } from "jotai";
+import { useState } from "react";
+import { dataStore } from "@/store/stores";
+import { miners, tabIndex } from "@/store/atoms";
+import { Miner } from "@/types/types";
 import MinerItem from "@/components/miner-item";
+import TickMonitor from "@/components/tick-monitor";
 import "./index.less";
 
 export default function Index() {
   // const [tabBarIndex, setTabBarIndex] = useAtom(tabIndex);
   const [minersList, setMinersList] = useState(new Array<Miner>());
-  const [planetsList, setPlanetsList] = useState(new Array<Planet>());
+  const [subscriptions, setSubscriptions] = useState([] as Array<() => void>);
   useLoad(() => {
     try {
       const cachedMiners = getStorageSync("minersList");
@@ -30,40 +34,22 @@ export default function Index() {
     } catch (e) {
       console.warn(e);
     }
-    try {
-      const cachedPlanets = getStorageSync("planetsList");
-      setPlanetsList(JSON.parse(cachedPlanets));
-    } catch (e) {
-      console.warn(e);
-    }
     console.log("Page loaded.");
-    tabBarStore.set(tabIndex, 0);
-    getMinersList().then((res) => {
-      console.log("miners list", res);
-      if (res) {
-        setMinersList(res);
-        setStorage({
-          key: "minersList",
-          data: JSON.stringify(res),
-        });
-      }
+    dataStore.set(tabIndex, 0);
+    const unSubMiners = dataStore.sub(miners, () => {
+      const newMiners = dataStore.get(miners);
+      setMinersList(newMiners);
+      setStorageSync("minersList", JSON.stringify(newMiners));
     });
-    getPlanetsList().then((res) => {
-      if (res) {
-        // planetStore.set(planets, res);
-        setPlanetsList(res);
-        setStorage({
-          key: "planetsList",
-          data: JSON.stringify(res),
-        });
-      }
+    subscriptions.push(unSubMiners);
+    setSubscriptions(subscriptions);
+  });
+  useReady(() => {});
+  useUnload(() => {
+    subscriptions.forEach((sub) => {
+      sub();
     });
   });
-  useEffect(() => {
-    console.log("set store");
-    planetStore.set(planets, planetsList);
-  }, [planetsList]);
-  useReady(() => {});
   const navBarHeight = getNavBarHeight();
   const tabBarHeight = getTabBarHeight();
   const pixelRatio = getPixelRatio();
@@ -88,25 +74,29 @@ export default function Index() {
         >
           <GradientCover angle={180} />
         </View>
-        <Provider store={planetStore}>
-          <ScrollView
-            className="miner-list"
-            scrollY
-            enhanced
-            showScrollbar={false}
-            style={{
-              height: `${
-                (screenHeight - navBarHeight - tabBarHeight) * pixelRatio
-              }rpx`,
-            }}
-          >
-            <View className="padding-view"></View>
-            {minersList.map((miner) => {
-              return <MinerItem miner={miner} key={miner._id}></MinerItem>;
-            })}
-            <View className="padding-view"></View>
-          </ScrollView>
-        </Provider>
+        <View
+          className="tick-counter-container"
+          style={{ top: `${navBarHeight * pixelRatio + 16 * pixelRatio}rpx` }}
+        >
+          <TickMonitor />
+        </View>
+        <ScrollView
+          className="miner-list"
+          scrollY
+          enhanced
+          showScrollbar={false}
+          style={{
+            height: `${
+              (screenHeight - navBarHeight - tabBarHeight) * pixelRatio
+            }rpx`,
+          }}
+        >
+          <View className="padding-view"></View>
+          {minersList.map((miner) => {
+            return <MinerItem miner={miner} key={miner._id}></MinerItem>;
+          })}
+          <View className="padding-view"></View>
+        </ScrollView>
       </View>
       <View
         style={{ height: `${tabBarHeight * pixelRatio}rpx` }}

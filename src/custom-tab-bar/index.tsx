@@ -1,5 +1,5 @@
 import { useLoad, useReady, useUnload } from "@tarojs/taro";
-import { tabBarStore } from "@/store/stores";
+import { dataStore } from "@/store/stores";
 import { tabIndex } from "@/store/atoms";
 import { useEffect, useState } from "react";
 import { View, Text, Image } from "@tarojs/components";
@@ -9,10 +9,10 @@ import GradientCover from "@/components/gradient-cover";
 import "./index.less";
 
 const CustomTabBar = () => {
-  const [index, setIndex] = useState(tabBarStore.get(tabIndex));
+  const [index, setIndex] = useState(dataStore.get(tabIndex));
   const paddingHeight = getTabBarPadding();
-  const unSub = tabBarStore.sub(tabIndex, () => {
-    const newIndex = tabBarStore.get(tabIndex);
+  const unSub = dataStore.sub(tabIndex, () => {
+    const newIndex = dataStore.get(tabIndex);
     setIndex(newIndex);
   });
   useEffect(() => {
@@ -27,7 +27,9 @@ const CustomTabBar = () => {
   });
   return (
     <>
-      <GradientCover angle={0} />
+      <View style={{ marginBottom: "-2rpx" }}>
+        <GradientCover angle={0} />
+      </View>
       <View
         className="tabbar-container"
         style={{ paddingBottom: `${paddingHeight}px` }}

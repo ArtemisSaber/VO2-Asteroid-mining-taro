@@ -1,5 +1,5 @@
 import { createStore } from "jotai";
 
-export const tabBarStore = createStore();
+export const dataStore = createStore();
 
 export const planetStore = createStore();
