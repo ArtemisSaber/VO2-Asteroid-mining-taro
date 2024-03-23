@@ -10,6 +10,7 @@
   color: #fff;
   padding: 24rpx 48rpx;
   overflow: hidden;
+  box-sizing: border-box;
   .miner-transit-status {
     display: flex;
     flex-direction: column;
@@ -36,16 +37,20 @@
     display: flex;
     flex-wrap: wrap;
     column-gap: 32rpx;
+    row-gap: 12rpx;
     .miner-stat-item {
       display: flex;
       flex-direction: column;
       .stat-title {
         color: @item-color;
         font-size: 18rpx;
+        line-height: 18rpx;
+        margin-bottom: 4rpx;
       }
       .stat-content {
         color: #fff;
         font-size: 28rpx;
+        line-height: 28rpx;
         &.full {
           color: #6be480;
         }
