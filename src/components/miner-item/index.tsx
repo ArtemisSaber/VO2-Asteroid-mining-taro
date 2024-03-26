@@ -2,9 +2,11 @@ import { Miner, Planet } from "@/types/types";
 import { View } from "@tarojs/components";
 import { getItemById, TransitStatus } from "@/utils/utils";
 import { useEffect, useMemo, useState } from "react";
-import "./index.less";
 import { dataStore } from "@/store/stores";
 import { planets } from "@/store/atoms";
+import { useUnload } from "@tarojs/taro";
+
+import "./index.less";
 
 interface MinerItemProps {
   miner: Miner;
@@ -12,13 +14,20 @@ interface MinerItemProps {
 
 const MinerItem = ({ miner }: MinerItemProps) => {
   const [planetsList, setPlanetsList] = useState([] as Array<Planet>);
+  const [storeSubs, setStoreSubs] = useState([] as Array<() => void>);
 
   useEffect(() => {
     const subPlanets = dataStore.sub(planets, () => {
       const newPlanets = dataStore.get(planets);
       setPlanetsList(newPlanets);
     });
+    setStoreSubs([subPlanets]);
   }, []);
+  useUnload(() => {
+    storeSubs.forEach((sub) => {
+      sub();
+    });
+  });
 
   const minerPlanet = useMemo(() => {
     if (typeof miner.planet === "string") {
