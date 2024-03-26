@@ -8,6 +8,8 @@ import { dataStore } from "./store/stores";
 import { WS_URL } from "./config";
 import { EventData } from "./types/types";
 import { asteroids, miners, planets, tick } from "./store/atoms";
+import { getMinersList } from "./api/miner";
+import { getPlanetsList } from "./api/planets";
 
 function App({ children }: PropsWithChildren<any>) {
   const storage = dataStore;
@@ -29,6 +31,7 @@ function App({ children }: PropsWithChildren<any>) {
         });
       }, 5000);
       task.onMessage((res) => {
+        console.log("message res is", res);
         const eventData = JSON.parse(res.data) as EventData;
         if (eventData.args.length > 0) {
           const {
@@ -49,6 +52,16 @@ function App({ children }: PropsWithChildren<any>) {
           reason: err.errMsg,
         });
       });
+    });
+    getMinersList().then((res) => {
+      if (res) {
+        storage.set(miners, res);
+      }
+    });
+    getPlanetsList().then((res) => {
+      if (res) {
+        storage.set(planets, res);
+      }
     });
   });
 

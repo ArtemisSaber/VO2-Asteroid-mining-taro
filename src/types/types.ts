@@ -1,7 +1,7 @@
 export interface Miner {
   _id: string;
   name: string;
-  planet: Planet;
+  planet: Planet | string;
   x: number;
   y: number;
   angle: number;

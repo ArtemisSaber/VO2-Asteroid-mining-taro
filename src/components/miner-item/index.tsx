@@ -1,17 +1,39 @@
-import { Miner } from "@/types/types";
+import { Miner, Planet } from "@/types/types";
 import { View } from "@tarojs/components";
-import { TransitStatus } from "@/utils/utils";
+import { getItemById, TransitStatus } from "@/utils/utils";
+import { useEffect, useMemo, useState } from "react";
 import "./index.less";
+import { dataStore } from "@/store/stores";
+import { planets } from "@/store/atoms";
 
 interface MinerItemProps {
   miner: Miner;
 }
 
 const MinerItem = ({ miner }: MinerItemProps) => {
+  const [planetsList, setPlanetsList] = useState([] as Array<Planet>);
+
+  useEffect(() => {
+    const subPlanets = dataStore.sub(planets, () => {
+      const newPlanets = dataStore.get(planets);
+      setPlanetsList(newPlanets);
+    });
+  }, []);
+
+  const minerPlanet = useMemo(() => {
+    if (typeof miner.planet === "string") {
+      return getItemById(miner.planet, planetsList);
+    } else {
+      return miner.planet;
+    }
+  }, [miner, planetsList]);
+
   return (
     <View className="miner-item-container">
       <View className="miner-transit-status">
-        <View className="miner-planet">{miner.planet.name}</View>
+        <View className="miner-planet">
+          {minerPlanet ? minerPlanet.name : ""}
+        </View>
         <View className="miner-name">{miner.name}</View>
         <View className="miner-status">{TransitStatus[miner.status]}</View>
       </View>
