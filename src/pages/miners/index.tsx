@@ -17,8 +17,8 @@ import {
 import GradientCover from "@/components/gradient-cover";
 import { useState } from "react";
 import { dataStore } from "@/store/stores";
-import { miners, tabIndex } from "@/store/atoms";
-import { Miner } from "@/types/types";
+import { miners, planets, tabIndex } from "@/store/atoms";
+import { Miner, Planet } from "@/types/types";
 import MinerItem from "@/components/miner-item";
 import TickMonitor from "@/components/tick-monitor";
 import "./index.less";
@@ -26,6 +26,7 @@ import "./index.less";
 export default function Index() {
   // const [tabBarIndex, setTabBarIndex] = useAtom(tabIndex);
   const [minersList, setMinersList] = useState(new Array<Miner>());
+  const [planetsList, setPlanetsList] = useState(new Array<Planet>());
   const [subscriptions, setSubscriptions] = useState([] as Array<() => void>);
   useLoad(() => {
     try {
@@ -41,7 +42,13 @@ export default function Index() {
       setMinersList(newMiners);
       setStorageSync("minersList", JSON.stringify(newMiners));
     });
+    const unSubPlanets = dataStore.sub(planets, () => {
+      const newPlanets = dataStore.get(planets);
+      console.log("new planets", newPlanets);
+      setPlanetsList(newPlanets);
+    });
     subscriptions.push(unSubMiners);
+    subscriptions.push(unSubPlanets);
     setSubscriptions(subscriptions);
   });
   useReady(() => {});
@@ -93,7 +100,13 @@ export default function Index() {
         >
           <View className="padding-view"></View>
           {minersList.map((miner) => {
-            return <MinerItem miner={miner} key={miner._id}></MinerItem>;
+            return (
+              <MinerItem
+                miner={miner}
+                key={miner._id}
+                planetsList={planetsList}
+              ></MinerItem>
+            );
           })}
           <View className="padding-view"></View>
         </ScrollView>

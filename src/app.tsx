@@ -10,6 +10,7 @@ import { EventData } from "./types/types";
 import { asteroids, miners, planets, tick } from "./store/atoms";
 import { getMinersList } from "./api/miner";
 import { getPlanetsList } from "./api/planets";
+import { getHistoryByMinerId } from "./api/history";
 
 function App({ children }: PropsWithChildren<any>) {
   const storage = dataStore;
@@ -56,10 +57,23 @@ function App({ children }: PropsWithChildren<any>) {
     getMinersList().then((res) => {
       if (res) {
         storage.set(miners, res);
+        const defaultMiner = res[0];
+        if (defaultMiner) {
+          getHistoryByMinerId(defaultMiner._id).then((resData) => {
+            if (resData) {
+              const latestTick = resData[0];
+              if (latestTick) {
+                const tickCount = latestTick.year;
+                storage.set(tick, tickCount);
+              }
+            }
+          });
+        }
       }
     });
     getPlanetsList().then((res) => {
       if (res) {
+        console.log("planets", res);
         storage.set(planets, res);
       }
     });

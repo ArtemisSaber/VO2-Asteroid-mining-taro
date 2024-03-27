@@ -47,3 +47,26 @@ export interface TickPayload {
   planets: Array<Planet>;
   currentTick: number;
 }
+
+export interface History {
+  capacity: Capacity;
+  speed: Speed;
+  position: Position;
+  _id: string;
+  year: number;
+  planet: string;
+  status: number;
+  miner: string;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: number;
+}
+
+export interface Capacity {
+  current: number;
+  max: number;
+}
+export interface Speed {
+  travel: number;
+  mining: number;
+}
